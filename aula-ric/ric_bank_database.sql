@@ -4,10 +4,8 @@ GO
 USE RicBank;
 GO
 
-DROP DATABASE RicBank;
-
 CREATE TABLE dbo.Agencia (
-    IdAgencia       INT                 IDENTITY(1,1),
+    Id              INT                 IDENTITY(1,1),
     Numero          VARCHAR(10)         NOT NULL UNIQUE,
     Nome            VARCHAR(100)        NOT NULL,
     Cidade          VARCHAR(80)         NOT NULL,
@@ -15,7 +13,7 @@ CREATE TABLE dbo.Agencia (
 
     CONSTRAINT PK_IdAgencia         PRIMARY KEY (Id),
     CONSTRAINT UQ_Numero_Agencia    UNIQUE (Numero)
-)
+);
 GO
 
 CREATE TABLE dbo.Cliente (
@@ -55,7 +53,7 @@ CREATE TABLE dbo.Cartao (
     Id              INT             IDENTITY(1,1),
     IdCliente       INT             NOT NULL,
     IdConta         INT             NOT NULL,
-    NumeroCartao    VARCHAR(20)     NOT NULL,
+    Numero          VARCHAR(20)     NOT NULL,
     TipoCartao      VARCHAR(20)     NOT NULL,
     Limite          DECIMAL(18,2)   NOT NULL,
     DataValidade    DATE            NOT NULL,
@@ -69,9 +67,9 @@ CREATE TABLE dbo.Cartao (
 GO
 
 CREATE TABLE dbo.Transacao (
-    IDTransacao     INT             IDENTITY(1,1),
-    IDConta         INT             NOT NULL,
-    TipoTransacao   VARCHAR(30)     NOT NULL,
+    Id              INT             IDENTITY(1,1),
+    IdConta         INT             NOT NULL,
+    Tipo            VARCHAR(30)     NOT NULL,
     Valor           DECIMAL(18,2)   NOT NULL,
     DataTransacao   DATETIME        NOT NULL DEFAULT GETDATE(),
     Descricao       VARCHAR(200)    NULL,
@@ -126,8 +124,8 @@ GO
 CREATE TABLE dbo.Lancamento(
     Id                  INT             IDENTITY, 
     IdConta             INT             NOT NULL, 
-    IdTipoLancamento    INT             NOT NULL,
-    IdOrigemLancamento  INT             NOT NULL,
+    IdTipoLancamento    TINYINT         NOT NULL,
+    IdOrigemLancamento  TINYINT         NOT NULL,
     DebitoCredito       CHAR(1)         NOT NULL,
     Descricao           VARCHAR(100)    NOT NULL,
     Valor               VARCHAR(20)     NOT NULL,
@@ -158,7 +156,7 @@ CREATE INDEX idx_TipoLancamento
     ON dbo.TipoLancamento(
                        Id,
                        Nome);
-
+GO
 
 CREATE OR ALTER FUNCTION dbo.fn_CalcularTarifa (@Saldo DECIMAL(18,2))
 RETURNS DECIMAL(18,2)
@@ -174,12 +172,12 @@ BEGIN
 END;
 GO
 
-CREATE OR ALTER FUNCTION dbo.fn_ExtratoResumido (@ContaID INT)
+CREATE OR ALTER FUNCTION dbo.fn_ExtratoResumido (@IdConta INT)
 RETURNS TABLE
 AS
 RETURN
 (
-    SELECT TOP 10 Id, DataTransacao, TipoTransacao, Valor, Descricao
+    SELECT TOP 10 Id, DataTransacao, Tipo, Valor, Descricao
     FROM dbo.Transacao
     WHERE IdConta = @IdConta
     ORDER BY DataTransacao DESC
@@ -197,25 +195,25 @@ BEGIN
     SET Saldo = Saldo + @Valor
     WHERE Id = @IdConta;
 
-    INSERT INTO dbo.Transacao (IdConta, TipoTransacao, Valor, Descricao)
+    INSERT INTO dbo.Transacao (IdConta, Tipo, Valor, Descricao)
     VALUES (@IdConta, 'DEPOSITO', @Valor, 'Deposito realizado');
 END;
 GO
 
 CREATE OR ALTER PROCEDURE dbo.usp_Sacar
-    @ContaID INT,
+    @IdConta INT,
     @Valor DECIMAL(18,2)
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (SELECT 1 FROM dbo.Conta WHERE ContaID = @ContaID AND Saldo >= @Valor)
+    IF EXISTS (SELECT 1 FROM dbo.Conta WHERE Id = @IdConta AND Saldo >= @Valor)
     BEGIN
         UPDATE dbo.Conta
         SET Saldo = Saldo - @Valor
         WHERE Id = @IdConta;
 
-        INSERT INTO dbo.Transacao (IdConta, TipoTransacao, Valor, Descricao)
+        INSERT INTO dbo.Transacao (IdConta, Tipo, Valor, Descricao)
         VALUES (@IdConta, 'SAQUE', @Valor, 'Saque realizado');
     END
     ELSE
@@ -241,7 +239,7 @@ BEGIN
         UPDATE dbo.Conta SET Saldo = Saldo - @Valor WHERE Id = @ContaOrigemID;
         UPDATE dbo.Conta SET Saldo = Saldo + @Valor WHERE Id = @ContaDestinoID;
 
-        INSERT INTO dbo.Transacao (IdConta, TipoTransacao, Valor, Descricao)
+        INSERT INTO dbo.Transacao (IdConta, Tipo, Valor, Descricao)
         VALUES
         (@ContaOrigemId, 'TRANSFERENCIA_SAIDA', @Valor, 'Transferencia enviada'),
         (@ContaDestinoId, 'TRANSFERENCIA_ENTRADA', @Valor, 'Transferencia recebida');
