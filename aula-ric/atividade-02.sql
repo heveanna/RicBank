@@ -108,6 +108,8 @@ SELECT Id,
 -- 10. LISTAR as contas informando as palavras "IMPAR" ou "PAR" dependendo
 -- do saldo. Este atributo tem que se chamar "Tipo Saldo"
 
+CASE 
+
 -- 11. Altere o saldo da conta que atualmente tem o menor saldo para
 -- R$ 1.000 a mais 
 

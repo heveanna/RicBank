@@ -27,7 +27,7 @@ VALUES
 (5, 2, '10005-2', 'C', 9800.75,  'ATIVA');
 GO
 
-INSERT INTO dbo.Cartao (IdCliente, IdConta, Numero, Tipo, Limite, DataValidade, Situacao)
+INSERT INTO dbo.Cartao (IdCliente, IdConta, Numero, TipoCartao, Limite, DataValidade, Situacao)
 VALUES
 (1, 1, '5000000000000001', 'CREDITO',  3000.00, '2028-12-31', 'ATIVO'),
 (2, 2, '5000000000000002', 'DEBITO',      0.00, '2027-10-31', 'ATIVO'),
@@ -47,9 +47,8 @@ VALUES
 (5, 'DEPOSITO',          2500.00,  DATEADD(DAY,  -1, GETDATE()), 'TED recebida');
 GO
 
-INSERT INTO dbo.Emprestimo (IdCliente, ValorSolicitado, TaxaJuros, QuantidadeParcelas, Situacao)
+INSERT INTO dbo.Emprestimo (IdCliente, ValorSolicitado, TaxaJuros, QuantidadeParcelas, SituacaoEmprestimo)
 VALUES
 (1,  5000.00, 1.80, 12, 'APROVADO'),
 (3, 12000.00, 2.10, 24, 'EM_ANALISE'),
 (4,  3000.00, 1.50, 10, 'APROVADO');
-GO

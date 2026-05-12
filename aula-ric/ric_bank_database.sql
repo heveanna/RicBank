@@ -262,4 +262,3 @@ BEGIN
     SELECT 'Conta', 'AUDITORIA_DIARIA', CONCAT('Conta ', Numero, ' com saldo ', Saldo)
     FROM dbo.Conta;
 END;
-GO
