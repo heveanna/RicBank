@@ -25,7 +25,7 @@ INSERT INTO #Conta (Id, IdCliente, IdAgencia, Numero, Tipo, Saldo, Situacao, Dat
            Saldo, 
            Situacao, 
            DataAbertura
-        FROM [dbo].[Conta];
+        FROM #Conta;
 
 -- 3. SELECT TEMP 
 
@@ -118,16 +118,16 @@ SELECT  Id,
         WHEN Saldo % 2 = 0 THEN 'PAR'
         ELSE 'IMPAR'
     END AS 'Tipo Saldo'
-  FROM [dbo].[Conta] WITH(NOLOCK);
+  FROM #Conta WITH(NOLOCK);
 
 -- 11. Altere o saldo da conta que atualmente tem o menor saldo para
 -- R$ 1.000 a mais 
 
-UPDATE [dbo].[Conta]
+UPDATE #Conta
     SET Saldo = Saldo + 1000
     WHERE Saldo = (
         SELECT TOP 1 MIN(Saldo) 
-        FROM [dbo].[Conta] 
+        FROM #Conta
     );
 
 -- 12. Liste as conta em ordem de saldo crescente 
