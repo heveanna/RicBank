@@ -1,7 +1,6 @@
 USE RicBank;
 
 -- Rick Bank
-
 -- 1. Criar tabela
 CREATE TABLE #Conta (
     Id              INT,
@@ -26,7 +25,7 @@ INSERT INTO #Conta (Id, IdCliente, IdAgencia, Numero, Tipo, Saldo, Situacao, Dat
            Saldo, 
            Situacao, 
            DataAbertura
-        FROM Conta;
+        FROM [dbo].[Conta];
 
 -- 3. SELECT TEMP 
 
@@ -49,10 +48,10 @@ INSERT INTO #Conta (Id, IdCliente, IdAgencia, Numero, Tipo, Saldo, Situacao, Dat
            Situacao, 
            DataAbertura,
            (SELECT AVG(Saldo)
-                FROM Conta c1
+                FROM [dbo].[Conta] c1
                 WHERE c1.IdAgencia = c2.IdAgencia
                 GROUP BY c1.IdAgencia)
-        FROM Conta as c2;
+        FROM [dbo].[Conta] as c2;
             
 -- 6. SELECT TEMP(tabela temporaria) ordenado pelo saldo crescente
 
@@ -64,7 +63,7 @@ SELECT  Id,
         Saldo, 
         Situacao, 
         DataAbertura,
-        FORMAT(SaldoMedioAgencia, 'C', 'Pt-Br')
+        FORMAT(SaldoMedioAgencia, 'C', 'Pt-Br') as 'Saldo Medio'
     FROM #Conta
     ORDER BY Saldo ASC;
 
@@ -74,7 +73,7 @@ DELETE
     FROM #Conta 
     WHERE Saldo = 
         (SELECT MIN(Saldo)
-            FROM #Conta)
+            FROM #Conta);
 
 -- 8. SELECT TEMP ordenado pelo saldo maior 
 
@@ -86,7 +85,7 @@ SELECT  Id,
         Saldo, 
         Situacao, 
         DataAbertura,
-        FORMAT(SaldoMedioAgencia, 'C', 'Pt-Br')
+        FORMAT(SaldoMedioAgencia, 'C', 'Pt-Br') as 'Saldo Media'
     FROM #Conta
     ORDER BY Saldo DESC;
 
@@ -103,20 +102,47 @@ SELECT Id,
        SaldoMedioAgencia
     FROM #Conta 
     WHERE Saldo > SaldoMedioAgencia
-    ORDER BY Saldo DESC
+    ORDER BY Saldo DESC;
 
 -- 10. LISTAR as contas informando as palavras "IMPAR" ou "PAR" dependendo
 -- do saldo. Este atributo tem que se chamar "Tipo Saldo"
 
-CASE 
+SELECT  Id,
+        IdCliente,
+        Numero, 
+        Tipo, 
+        Situacao,
+        DataAbertura,
+        FORMAT(Saldo, 'C', 'Pt-Br') as Saldo,
+    CASE 
+        WHEN Saldo % 2 = 0 THEN 'PAR'
+        ELSE 'IMPAR'
+    END AS 'Tipo Saldo'
+  FROM [dbo].[Conta] WITH(NOLOCK);
 
 -- 11. Altere o saldo da conta que atualmente tem o menor saldo para
 -- R$ 1.000 a mais 
 
-SELECT 
+UPDATE [dbo].[Conta]
+    SET Saldo = Saldo + 1000
+    WHERE Saldo = (
+        SELECT TOP 1 MIN(Saldo) 
+        FROM [dbo].[Conta] 
+    );
 
 -- 12. Liste as conta em ordem de saldo crescente 
 
+SELECT  Id,
+        IdCliente,
+        IdAgencia, 
+        Numero, 
+        Tipo, 
+        Situacao, 
+        DataAbertura,
+        FORMAT(Saldo, 'C', 'Pt-Br') as Saldo
+    FROM #Conta
+    ORDER BY Saldo;
+
 -- 13. Apague a TEMP 
 
-DELETE * FROM #Conta;
+DELETE FROM #Conta;
