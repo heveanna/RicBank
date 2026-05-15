@@ -419,7 +419,7 @@ INSERT INTO [dbo].[Lancamento] (IdSaldo, DataLancamento, Historico, DebCre, Valo
 VALUES (14, GETDATE(), 'Mercado', 'C', 800.00);
 
 UPDATE [dbo].[Saldo] 
-	SET Debito = Debito + 800.00
+	SET Credito = Credito + 800.00
 	WHERE Id = 14;
 
 SELECT *

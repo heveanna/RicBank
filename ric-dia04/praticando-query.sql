@@ -6,17 +6,52 @@ USE RickBankPower;
 
 SELECT	cl.Nome AS Cliente,
 		ag.Numero AS Agencia,
-		co.numero AS Conta,
+		co.Numero AS Conta,
 		co.DataCadastro AS 'Data Cadastro'
-	FROM Cliente as cl 
-		JOIN Agencia as ag
-			ON cl.Id = ag.Id
-		JOIN Conta as co
-			ON cl.Id = co.Id
-	ORDER BY 
+	FROM [dbo].[Conta] as co WITH(NOLOCK)
+		JOIN [dbo].[Cliente] as cl
+			ON cl.Id = co.IdCliente
+		JOIN [dbo].[Agencia] as ag
+			ON ag.Id = co.IdAgencia
+	ORDER BY cl.Nome ASC;
 
 -- 2. Saldo Atual por Conta
 -- O saldo real de uma conta é $(SaldoInicial + Credito - Debito)$. 
 -- Escreva um SELECT que retorne o Nome do Cliente, o Número da Conta e o Saldo Atual calculado.
 
--- 
+SELECT  cl.Nome AS Cliente, 
+		co.Numero AS Conta,
+		SUM(sa.SaldoInicial + sa.Credito + sa.Debito) AS Saldo
+	FROM [dbo].[Conta] as co WITH(NOLOCK)
+		JOIN [dbo].[Cliente] as cl
+			ON cl.Id = co.IdCliente
+		JOIN [dbo].[Saldo] as sa	
+			ON sa.IdConta = co.Id
+		GROUP BY sa.SaldoInicial, sa.Credito, sa.Debito, cl.Nome, co.Numero;
+
+-- 3. Clientes sem Movimentação
+-- Encontre todos os clientes (Nome e CPF) que possuem uma conta cadastrada, mas que ainda
+-- não possuem nenhum registro na tabela de Lancamento.				 	
+
+SELECT  co.Id,
+		cl.Nome AS Cliente,
+		cl.CPF,
+		la.Historico AS Lancamento
+	FROM [dbo].[Conta] as co
+		JOIN [dbo].[Cliente] as cl
+			ON cl.Id = co.IdCliente
+		JOIN [dbo].[Lancamento] as la
+			ON la.Id = cl.Id
+	WHERE la.Historico = ' ';
+
+-- 4. Resumo de Lançamentos por Tipo
+-- Utilizando a tabela Lancamento, mostre o Histórico (ou agrupe por palavras-chave)    ('D') e a soma para Crédito ('C').
+
+SELECT	la.Historico,
+		Format(SUM(sa.Debito + sa.Credito), 'C', 'Pt-Br') AS 'Soma de valores'
+	FROM [dbo].[Lancamento] as la
+		JOIN [dbo].[Saldo] as sa 
+			ON sa.Id = la.Id
+	GROUP BY la.Historico, la.Valor, 
+				sa.Debito, sa.Credito;
+
