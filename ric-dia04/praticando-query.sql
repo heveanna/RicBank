@@ -55,3 +55,25 @@ SELECT	la.Historico,
 	GROUP BY la.Historico, la.Valor, 
 				sa.Debito, sa.Credito;
 
+-- 5. Ranking de Agências
+-- Descubra qual agência possui o maior volume de dinheiro movimentado (Soma de Crédito +
+-- Soma de Débito). Exiba o Nome da Agência e o Total Movimentado.
+
+SELECT	TOP 1 ag.Id,
+		ag.Nome AS Agencia,
+		SUM(sa.Debito + sa.Credito) AS 'Total Movimentado'
+	FROM [dbo].[Agencia] as ag WITH(NOLOCK)
+		JOIN [dbo].[Conta] as co
+			ON co.IdAgencia = ag.Id
+		JOIN [dbo].[Saldo] as sa
+			ON sa.Id = co.Id
+	GROUP BY ag.Id, ag.Nome
+	ORDER BY 'Total Movimentado' DESC;
+
+-- 6. Filtro de Idade (Data de Nascimento)
+-- Selecione o nome e a idade de todos os clientes que têm mais de 30 anos.
+
+DECLARE @Ano INT = 2026;
+DECLARE @Idade INT = 30;
+
+SELECT 
