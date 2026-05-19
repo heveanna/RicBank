@@ -73,7 +73,28 @@ SELECT	TOP 1 ag.Id,
 -- 6. Filtro de Idade (Data de Nascimento)
 -- Selecione o nome e a idade de todos os clientes que têm mais de 30 anos.
 
-DECLARE @Ano INT = 2026;
-DECLARE @Idade INT = 30;
+DECLARE @Idade INT;
+SET @Idade = 30;
 
-SELECT 
+SELECT	cl.Nome,
+		cl.DataNascimento,
+    DATEDIFF(YEAR, cl.DataNascimento, GETDATE()) - 
+        CASE 
+            WHEN DATEADD(YEAR, DATEDIFF(YEAR, cl.DataNascimento, GETDATE()), cl.DataNascimento) > GETDATE() 
+            THEN 1 
+            ELSE 0 
+        END AS Idade
+FROM [dbo].[Cliente] as cl WITH(NOLOCK)
+WHERE 
+    (DATEDIFF(YEAR, cl.DataNascimento, GETDATE()) - 
+        CASE 
+            WHEN DATEADD(YEAR, DATEDIFF(YEAR, cl.DataNascimento, GETDATE()), cl.DataNascimento) > GETDATE() 
+            THEN 1 
+            ELSE 0 
+        END) > @Idade;
+
+-- 7. Verificação de Integridade (Saldo vs Lançamentos)
+-- Crie uma consulta que compare a coluna Debito da tabela Saldo com a soma dos valores 'D' da
+-- tabela Lancamento para cada conta. Isso serve para verificar se os seus UPDATEs manuais foram
+-- feitos corretamente.
+
