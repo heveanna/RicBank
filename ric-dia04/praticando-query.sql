@@ -98,3 +98,11 @@ WHERE
 -- tabela Lancamento para cada conta. Isso serve para verificar se os seus UPDATEs manuais foram
 -- feitos corretamente.
 
+SELECT	sa.Debito AS Debito,
+		sa.Credito AS Credito, 
+		la.DebCre 
+	FROM [dbo].[Lancamento]	as la
+		JOIN [dbo].[Saldo] as sa
+			ON sa.Id = la.IdSaldo;
+
+-- 
