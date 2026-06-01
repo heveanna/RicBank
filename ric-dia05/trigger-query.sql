@@ -104,7 +104,6 @@ CREATE PROCEDURE [dbo].[SP_InsLancamento]
 		Autor:
 		Data Criação:
 		Exemplo: 
-	
 
 	BEGIN TRANSACTION 
 		DECLARE @RET INT, @DAT_INI DATETIME = GETDATE()
@@ -144,9 +143,7 @@ CREATE PROCEDURE [dbo].[SP_InsLancamento]
 
 		RETURN @Id
 	END
-
 GO
-
 		BEGIN TRANSACTION 
 
 			DECLARE @RET INT,
@@ -172,3 +169,4 @@ GO
 		ROLLBACK TRANSACTION 
 
 -- atualização do lançamento e exclusão do lançamento 
+
