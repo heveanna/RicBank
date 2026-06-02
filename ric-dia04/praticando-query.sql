@@ -60,3 +60,50 @@ SELECT	la.Historico,
 -- Soma de Débito). Exiba o Nome da Agência e o Total Movimentado.
 
 SELECT 
+SELECT	TOP 1 ag.Id,
+		ag.Nome AS Agencia,
+		SUM(sa.Debito + sa.Credito) AS 'Total Movimentado'
+	FROM [dbo].[Agencia] as ag WITH(NOLOCK)
+		JOIN [dbo].[Conta] as co
+			ON co.IdAgencia = ag.Id
+		JOIN [dbo].[Saldo] as sa
+			ON sa.Id = co.Id
+	GROUP BY ag.Id, ag.Nome
+	ORDER BY 'Total Movimentado' DESC;
+
+-- 6. Filtro de Idade (Data de Nascimento)
+-- Selecione o nome e a idade de todos os clientes que têm mais de 30 anos.
+
+DECLARE @Idade INT;
+SET @Idade = 30;
+
+SELECT	cl.Nome,
+		cl.DataNascimento,
+    DATEDIFF(YEAR, cl.DataNascimento, GETDATE()) - 
+        CASE 
+            WHEN DATEADD(YEAR, DATEDIFF(YEAR, cl.DataNascimento, GETDATE()), cl.DataNascimento) > GETDATE() 
+            THEN 1 
+            ELSE 0 
+        END AS Idade
+FROM [dbo].[Cliente] as cl WITH(NOLOCK)
+WHERE 
+    (DATEDIFF(YEAR, cl.DataNascimento, GETDATE()) - 
+        CASE 
+            WHEN DATEADD(YEAR, DATEDIFF(YEAR, cl.DataNascimento, GETDATE()), cl.DataNascimento) > GETDATE() 
+            THEN 1 
+            ELSE 0 
+        END) > @Idade;
+
+-- 7. Verificação de Integridade (Saldo vs Lançamentos)
+-- Crie uma consulta que compare a coluna Debito da tabela Saldo com a soma dos valores 'D' da
+-- tabela Lancamento para cada conta. Isso serve para verificar se os seus UPDATEs manuais foram
+-- feitos corretamente.
+
+SELECT	sa.Debito AS Debito,
+		sa.Credito AS Credito, 
+		la.DebCre 
+	FROM [dbo].[Lancamento]	as la
+		JOIN [dbo].[Saldo] as sa
+			ON sa.Id = la.IdSaldo;
+
+-- 
