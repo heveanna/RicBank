@@ -1,6 +1,14 @@
 USE RickBankPower;
 
--- criar uma procedure de atualizar lançamento e exclusão de lançamento 
+-- criar uma procedure de atualizar lançamento e 
+
+UPDATE 
+
+
+
+
+
+-- exclusão de lançamento 
 
 GO 
 
@@ -17,7 +25,7 @@ BEGIN
 	Documentação: 
 	Arquivo Nome: RickBankDia06.sql
 	Objetivo: 
-	Autor: 
+	Autor: Anna Hevellyn 
 	Data Criação:
 	Exemplo: 
 */
