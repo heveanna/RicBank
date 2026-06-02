@@ -146,3 +146,4 @@ SELECT  Id,
 -- 13. Apague a TEMP 
 
 DELETE FROM #Conta;
+ 

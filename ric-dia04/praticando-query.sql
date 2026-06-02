@@ -55,3 +55,8 @@ SELECT	la.Historico,
 	GROUP BY la.Historico, la.Valor, 
 				sa.Debito, sa.Credito;
 
+-- 5. Ranking de Agências
+-- Descubra qual agência possui o maior volume de dinheiro movimentado (Soma de Crédito +
+-- Soma de Débito). Exiba o Nome da Agência e o Total Movimentado.
+
+SELECT 
