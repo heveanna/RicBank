@@ -22,9 +22,9 @@ GO
 		@Valor				DECIMAL(10,2)
 AS
 /*
-	Documentação: ProcAtuLancamento.sql
+	Documentação: 
 	Arquivo Nome: RickBankDia06.sql
-	Objetivo: Atualizar lançamentos
+	Objetivo: Atualizar os lançamentos
 	Autor: Anna Hevellyn 
 	Data Criação: 02/06/2026
 	Exemplo: BEGIN TRANSACTION 
